@@ -19,6 +19,17 @@ class UserModel {
     return user;
   }
 
+  // Obter um usuário pelo nickname
+  async findByNickname(nickname) {
+    const user = await prisma.user.findUnique({
+      where: {
+        nickname,
+      },
+    });
+
+    return user;
+  }
+
   // Obter um usuário pelo email
   async findByEmail(email) {
     const user = await prisma.user.findUnique({
@@ -29,6 +40,8 @@ class UserModel {
 
     return user;
   }
+
+
 
   // Criar um novo usuário
   async create(data) {
