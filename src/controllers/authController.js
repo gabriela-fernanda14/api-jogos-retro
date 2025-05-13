@@ -17,13 +17,13 @@ class AuthController {
   // Registrar novo usuário
   async register(req, res) {
     try {
-      const { name, email, password } = req.body;
+      const { name, nickname, email, password } = req.body;
 
       // Validação básica
-      if (!name || !email || !password) {
+      if (!name || !nickname || !email || !password) {
         return res
           .status(400)
-          .json({ error: "Os campos nome, email e senha são obrigatórios!" });
+          .json({ error: "Os campos nome, nickname, email e senha são obrigatórios!" });
       }
 
       // Verificar se o usuário já existe
@@ -32,12 +32,20 @@ class AuthController {
         return res.status(400).json({ error: "Este email já está em uso!" });
       }
 
+        const userNicknameExists = await UserModel.findByNickname(nickname);
+        if (userNicknameExists) {
+          return res.status(400).json({ error: "Este nickname já está em uso!" });
+        }
+      if (userExists) {
+        return res.status(400).json({ error: "Este email já está em uso!" });
+      }
       // Hash da senha
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Criar objeto do usuário
       const data = {
         name,
+        nickname,
         email,
         password: hashedPassword,
       };
@@ -86,6 +94,7 @@ class AuthController {
         {
           id: userExists.id,
           name: userExists.name,
+          nickname: userExists.nickname,
           email: userExists.email,
         },
         process.env.JWT_SECRET,
