@@ -11,7 +11,30 @@ class GameController {
             res.status(500).json({ error: "Error finding all games" });
         }
     }
-}
 
+    async create(req, res) {
+        try {
+            const { name, platform } = req.body;
+            // Validação básica
+            if (!name || !platform) {
+                return res.status(400).json({ error: "Name and platform fields are required!" });
+            }
+        const data = {
+            name,
+            platform,
+        };
+
+        const newGame = await GameModel.create(data);
+
+        return res.status(201).json({
+            message: "New game successfully created!",
+            newGame,
+        });
+        } catch (error) { 
+        console.error("Error creating a newgame:", error);
+        res.status(500).json({ error: "Error creating a newgame" });
+        }
+    }
+}
 
 export default new GameController();
